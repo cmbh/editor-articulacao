@@ -112,8 +112,11 @@ function exportarParaLexML(dispositivoDOM, rotulos) {
                 case 'Subsecao':
                     return subtipo === 'Artigo';
 
+                case 'Alteracao':
+                        return subtipo === 'Artigo';
+    
                 case 'Artigo':
-                    return subtipo === 'Inciso' || subtipo === 'Paragrafo';
+                    return subtipo === 'Alteracao' || subtipo === 'Inciso' || subtipo === 'Paragrafo';
 
                 case 'Inciso':
                     return subtipo === 'Alinea';
@@ -184,6 +187,7 @@ function exportarParaLexML(dispositivoDOM, rotulos) {
             case 'Capitulo':
             case 'Secao':
             case 'Subsecao':
+            case 'Alteracao':
                 return new ContextoTransformacaoAgrupador(dispositivoLexML, contextoAnterior);
                 
             default:
@@ -263,11 +267,19 @@ function criarElementoLexML(tipo, conteudo, idPai, idxFilho, unico, nEmenda, rot
     elemento = document.createElementNS('http://www.lexml.gov.br/1.0', tipo);
     elemento.setAttribute('id', id);
 
-    elemento.appendChild(criarRotuloLexML(tipo, nEmenda ? idxFilho : idxFilho + 1, unico, nEmenda, rotulos));
+    const rotulo = criarRotuloLexML(tipo, nEmenda ? idxFilho : idxFilho + 1, unico, nEmenda, rotulos)
+    if (rotulo !== null) {
+        elemento.appendChild(rotulo);
+    }
 
     switch (tipo) {
         case 'Artigo':
             elemento.appendChild(criarCaputLexML(conteudo, id));
+            break;
+
+        case 'Alteracao':
+            console.log({conteudo})
+            elemento.appendChild(criarElementoLexML('Artigo', conteudo, id, 1, false, 1, ''));
             break;
 
         // Agrupadores
@@ -289,6 +301,10 @@ function criarElementoLexML(tipo, conteudo, idPai, idxFilho, unico, nEmenda, rot
 }
 
 function criarRotuloLexML(tipo, numero, unico, nEmenda, rotulos) {
+    if (tipo === 'Alteracao') {
+        return null;
+    }
+
     var elemento = document.createElementNS('http://www.lexml.gov.br/1.0', 'Rotulo');
 
     switch (tipo) {

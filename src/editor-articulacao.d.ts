@@ -180,11 +180,13 @@ declare enum TipoDispositivo {
     PARAGRAFO = 'paragrafo',
     INCISO = 'inciso',
     ALINEA = 'alinea',
-    CONTINUACAO = 'continuacao'
+    CONTINUACAO = 'continuacao',
+    ALTERACAO = 'alteracao'
 }
 
 declare const interpretadorArticulacao = {
     Artigo,
+    Alteracao,
     Paragrafo,
     Inciso,
     Alinea,
@@ -268,7 +270,13 @@ declare class Dispositivo {
 declare class Artigo extends Dispositivo {
     constructor(numero: string, caput: string);
 
-    adicionar(incisoOuParagrafo: Inciso | Paragrafo);
+    adicionar(incisoOuParagrafoOuAlteracao: Inciso | Paragrafo | Alteracao);
+}
+
+declare class Alteracao extends Dispositivo {
+    constructor(teste: string);
+
+    adicionar(artigo: Artigo);
 }
 
 declare class Paragrafo extends Dispositivo {
